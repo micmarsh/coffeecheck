@@ -3,6 +3,8 @@
 #grunt and some tests
 #a real algorithm for Arrays (fun!), a better namespace than "Gen", custom object constructor (the real deal)
 
+_ = require 'lodash'
+
 Gen = { }
 
 class Gen.Interface
@@ -30,14 +32,54 @@ class Gen.NonNegative extends Gen.Number
         min = 1
         super {max, min}
 
+multiVarNew = (constructor, args) ->
+    {length} = args
+    [arg0, arg1, arg2] = args
+    if length > 3
+        throw new Error "More than 3 arguments? Really?"
+
+    if length is 0
+        new constructor
+    else if length is 1
+        new constructor arg0
+    else if length is 2
+        new constructor arg0, arg1
+    else if length is 3
+        new constructor arg0, arg1, arg2
+
+_match = (name, args) ->
+    constructor = Gen[name]
+    unless Boolean constructor
+        throw Error "No type '#{name}' defined in 'Gen' namespace"
+
+    multiVarNew constructor, args
+
+match = (typeObj) ->
+    [name, args] = _.pairs(typeObj)[0]
+    console.log  "woah #{name}, #{args}"
+    _match name, args
+
+matchAll = (multiPropTypeObj) ->
+    pairs = _.pairs multiPropTypeObj
+    _.map pairs, (pair) ->
+        _match.apply @, pair
+
 class Gen.Array extends Gen.Interface
-    constructor: (@type, options={}) ->
-    #TODO initialize max and min lengths for now, maybe throw
-    #an exception if type isn't number or boolean or instance of interface
-    #this should be a seperate function that can check everything in
-     the "Gen"
-    #namespace. Yeah!!! like new Gen.Array 'Boolean' gets you a Gen.boolean, and new Gen.Array 'Array'
-    #gets u type Gen.Array,
+
+    _initLength: ({maxlength, minlength, length}) ->
+        @lengthChooser = new Gen.Number
+            max: maxlength or length
+            min: minlength or length
+
+    constructor: (type, options={}) ->
+        unless type?
+            throw Error "Need to define a type for Arrays"
+        @_initLength options
+        @itemMaker = match type
+    # a @type of of form {'Number':[{max: 3, min: 2}]}
     next: ->
+        length = @lengthChooser.next()
+        _.map [0...length], ->
+            @itemMaker.next()
 
 exports.Gen = Gen

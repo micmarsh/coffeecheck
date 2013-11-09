@@ -1,9 +1,10 @@
 
+_ = require 'lodash'
 
 property = (generator, method) ->
     LIMIT = 100 #for now!
 
-    [0...LIMIT].reduce (soFar, i) ->
+    _.reduce [0...LIMIT], (soFar, i) ->
         item = generator.next()
         soFar and method item
     , true

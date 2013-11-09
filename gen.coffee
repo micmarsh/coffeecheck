@@ -1,7 +1,8 @@
 
 #TODO:
 #grunt and some tests
-#a real algorithm for Arrays (fun!), a better namespace than "Gen", custom object constructor (the real deal)
+#custom object constructor (the real deal)
+#Make this shit into lazyjs seqs
 
 _ = require 'lodash'
 
@@ -11,9 +12,11 @@ class Gen.Interface
     _gen: true
     next: ->
         throw Error "next method not implemented"
+    toArray: (size = 100) ->
+        _.map [0...size], => @next()
 
 class Gen.Boolean extends Gen.Interface
-    next: -> Boolean new Date() % 2
+    next: -> Math.random() > 0.5
 
 class Gen.Number extends Gen.Interface
 
@@ -67,8 +70,8 @@ class Gen.Array extends Gen.Interface
 
     _initLength: ({maxlength, minlength, length}) ->
         @lengthChooser = new Gen.Number
-            max: maxlength or length
-            min: minlength or length
+            max: maxlength or length or 100
+            min: minlength or length or 0
 
     constructor: (type, options={}) ->
         unless type?
@@ -80,5 +83,9 @@ class Gen.Array extends Gen.Interface
         length = @lengthChooser.next()
         _.map [0...length], =>
             @itemMaker.next()
+
+class Gen.Tuple extends Gen.Array
+    constructor: (type, length = 2)->
+        super type, {length}
 
 exports.Gen = Gen

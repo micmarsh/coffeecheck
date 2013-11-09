@@ -4,10 +4,14 @@
 
 posMaker = new Gen.NonNegative 83
 
-arrayMaker = new Gen.Array {"Number": [{max: 200, min: -100}]}, {maxlength: 8, minlength: 4}
+arrayMaker = new Gen.Array {"Number": [{max: 200, min: -100}]}, {maxlength: 8}
+bArrayMaker = new Gen.Array {"Boolean":[]}, {length:4}
 
-property arrayMaker, (array) ->
+posCoords = new Gen.Array {"Tuple": [{'NonNegative': [100]}]}, {length: 3}
+
+property posCoords, (array) ->
     console.log array
     return true
+
 
 

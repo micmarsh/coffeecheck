@@ -15,6 +15,10 @@ class Gen.Interface
     toArray: (size = 100) ->
         _.map [0...size], => @next()
 
+isGen: (object) ->
+    {_gen, next, toArray}
+    Boolean _gen and next and toArray
+
 class Gen.Boolean extends Gen.Interface
     next: -> Math.random() > 0.5
 
@@ -58,8 +62,13 @@ _match = (name, args) ->
     multiVarNew constructor, args
 
 match = (typeObj) ->
-    [name, args] = _.pairs(typeObj)[0]
-    _match name, args
+    if _.isArray typeObj
+        [name, args] = _.pairs(typeObj)[0]
+        _match name, args
+    else if isGen typeObj
+        typeObj
+    else
+        throw new Error "WTF type is that?"
 
 matchAll = (multiPropTypeObj) ->
     pairs = _.pairs multiPropTypeObj

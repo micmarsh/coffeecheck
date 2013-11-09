@@ -56,7 +56,6 @@ _match = (name, args) ->
 
 match = (typeObj) ->
     [name, args] = _.pairs(typeObj)[0]
-    console.log  "woah #{name}, #{args}"
     _match name, args
 
 matchAll = (multiPropTypeObj) ->
@@ -79,7 +78,7 @@ class Gen.Array extends Gen.Interface
     # a @type of of form {'Number':[{max: 3, min: 2}]}
     next: ->
         length = @lengthChooser.next()
-        _.map [0...length], ->
+        _.map [0...length], =>
             @itemMaker.next()
 
 exports.Gen = Gen

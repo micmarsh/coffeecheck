@@ -101,6 +101,8 @@ class Arb.Tuple extends Arb.Array
 
 class Arb.String extends Arb.Interface
     constructor: (regex) ->
+        @generator = new RandExp regex
+    next: -> @generator.gen()
 
 toObject = (pairs) ->
     result = {}

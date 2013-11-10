@@ -15,8 +15,8 @@ class Gen.Interface
     toArray: (size = 100) ->
         _.map [0...size], => @next()
 
-isGen: (object) ->
-    {_gen, next, toArray}
+isGen = (object) ->
+    {_gen, next, toArray} = object
     Boolean _gen and next and toArray
 
 class Gen.Boolean extends Gen.Interface
@@ -62,11 +62,11 @@ _match = (name, args) ->
     multiVarNew constructor, args
 
 match = (typeObj) ->
-    if _.isArray typeObj
+    if isGen typeObj
+        typeObj
+    else if _.isObject typeObj
         [name, args] = _.pairs(typeObj)[0]
         _match name, args
-    else if isGen typeObj
-        typeObj
     else
         throw new Error "WTF type is that?"
 
@@ -96,5 +96,21 @@ class Gen.Array extends Gen.Interface
 class Gen.Tuple extends Gen.Array
     constructor: (type, length = 2)->
         super type, {length}
+
+toObject = (pairs) ->
+    result = {}
+    for [key, value] in pairs
+        result[key] = value
+    return result
+
+class Gen.Object extends Gen.Interface
+    constructor: (typeMap) ->
+        convertedTypes = _.map typeMap, (type, key) ->
+            [key, match type]
+        @typeMap = toObject convertedTypes
+
+    next: ->
+        toObject _.map @typeMap, (type, key) ->
+            [key, type.next()]
 
 exports.Gen = Gen

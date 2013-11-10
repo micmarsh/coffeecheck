@@ -1,7 +1,6 @@
 
 #TODO:
 #grunt and some tests
-#different probability booleans
 #string gen from regexes! (shi)
 #imperfect objects
 
@@ -21,7 +20,8 @@ isArb = (object) ->
     Boolean _gen and next and toArray
 
 class Arb.Boolean extends Arb.Interface
-    next: -> Math.random() > 0.5
+    constructor: (@PROB = 0.5) ->
+    next: -> Math.random() < @PROB
 
 class Arb.Number extends Arb.Interface
 

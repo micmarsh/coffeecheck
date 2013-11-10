@@ -20,7 +20,7 @@ print10Times = (generator) ->
 
 DECORATION = '+++++++++++'
 header = (title) ->
-    console.log DECORATION + title + DECORATION
+    console.log DECORATION + " #{title} " + DECORATION
 
 trueOrFalse = new Arb.Boolean
 mostlyTrue = new Arb.Boolean 0.9
@@ -32,13 +32,16 @@ collectionsOfBools = new Arb.Array trueOrFalse,
     maxlength: 5
     minlength: 2
 
-noteTexts = new Arb.String '(#(todo|checkout|read|eat|quotes) ){1,3} [a-z 0-9]{10,30}'
+noteTexts = new Arb.String '(#(todo|checkout|read|eat|quotes) ){1,3}[a-z 0-9]{10,30}'
 
 notes = new Arb.Object
     text: noteTexts
     archived: {'Boolean': 0.1}
     timestamp: positives
-    userIds: {'Array': [{'String': '[A-Za-h0-9]{16}'}, {maxlength: 3}]}
+    userIds: {'Array': [{'String': '[A-Za-h0-9]{16}'},
+        maxlength: 3
+        minlength: 1
+    ]}
 
 header 'Random Booleans'
 print10Times trueOrFalse

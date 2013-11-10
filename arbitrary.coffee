@@ -42,8 +42,6 @@ class Arb.NonNegative extends Arb.Number
         super {max, min}
 
 multiVarNew = (constructor, args) ->
-    unless _.isArray args
-        return new constructor args
     {length} = args
     [arg0, arg1, arg2] = args
     if length > 3
@@ -62,8 +60,11 @@ _match = (name, args) ->
     constructor = Arb[name]
     unless Boolean constructor
         throw Error "No type '#{name}' defined in 'Arb' namespace"
+    if _.isArray args
+        multiVarNew constructor, args
+    else
+        new constructor args
 
-    multiVarNew constructor, args
 
 match = (typeObj) ->
     if isArb typeObj

@@ -24,7 +24,6 @@ header = (title) ->
 
 trueOrFalse = new Arb.Boolean
 mostlyTrue = new Arb.Boolean 0.9
-mostlyFalse = new Arb.Boolean 0.1
 
 number = new Arb.Number {max: 500, min: -500}
 positives = new Arb.NonNegative 1000
@@ -33,13 +32,13 @@ collectionsOfBools = new Arb.Array trueOrFalse,
     maxlength: 5
     minlength: 2
 
-noteTexts = new Arb.String '(#(todo|checkout|read) ){1,3} [a-z 0-9]{10,30}'
+noteTexts = new Arb.String '(#(todo|checkout|read|eat|quotes) ){1,3} [a-z 0-9]{10,30}'
 
 notes = new Arb.Object
     text: noteTexts
-    archived: mostlyFalse
+    archived: {'Boolean': 0.1}
     timestamp: positives
-    userIds: {'Array': [{'String': ['[A-Za-h0-9]{16}']}, {maxlength: 3}]}
+    userIds: {'Array': [{'String': '[A-Za-h0-9]{16}'}, {maxlength: 3}]}
 
 header 'Random Booleans'
 print10Times trueOrFalse

@@ -42,11 +42,13 @@ class Arb.NonNegative extends Arb.Number
         super {max, min}
 
 multiVarNew = (constructor, args) ->
+    unless _.isArray args
+        return new constructor args
     {length} = args
     [arg0, arg1, arg2] = args
     if length > 3
         throw new Error "More than 3 arguments? Really?"
-
+    #TODO check this!
     if length is 0
         new constructor
     else if length is 1

@@ -5,6 +5,7 @@
 #imperfect objects
 
 _ = require 'lodash'
+RandExp = require 'randexp'
 
 Arb = { }
 
@@ -97,6 +98,9 @@ class Arb.Array extends Arb.Interface
 class Arb.Tuple extends Arb.Array
     constructor: (type, length = 2)->
         super type, {length}
+
+class Arb.String extends Arb.Interface
+    constructor: (regex) ->
 
 toObject = (pairs) ->
     result = {}

@@ -1,28 +1,29 @@
 
 #TODO:
 #grunt and some tests
-#custom object constructor (the real deal)
-#Make this shit into lazyjs seqs
+#different probability booleans
+#string gen from regexes! (shi)
+#imperfect objects
 
 _ = require 'lodash'
 
-Gen = { }
+Arb = { }
 
-class Gen.Interface
+class Arb.Interface
     _gen: true
     next: ->
         throw Error "next method not implemented"
     toArray: (size = 100) ->
         _.map [0...size], => @next()
 
-isGen = (object) ->
+isArb = (object) ->
     {_gen, next, toArray} = object
     Boolean _gen and next and toArray
 
-class Gen.Boolean extends Gen.Interface
+class Arb.Boolean extends Arb.Interface
     next: -> Math.random() > 0.5
 
-class Gen.Number extends Gen.Interface
+class Arb.Number extends Arb.Interface
 
     constructor: (args = {}) ->
         {@max, @min} = args
@@ -34,7 +35,7 @@ class Gen.Number extends Gen.Interface
         initial = Math.floor Math.random() * range
         initial + @min
 
-class Gen.NonNegative extends Gen.Number
+class Arb.NonNegative extends Arb.Number
     constructor: (max = 10000) ->
         min = 1
         super {max, min}
@@ -55,14 +56,14 @@ multiVarNew = (constructor, args) ->
         new constructor arg0, arg1, arg2
 
 _match = (name, args) ->
-    constructor = Gen[name]
+    constructor = Arb[name]
     unless Boolean constructor
-        throw Error "No type '#{name}' defined in 'Gen' namespace"
+        throw Error "No type '#{name}' defined in 'Arb' namespace"
 
     multiVarNew constructor, args
 
 match = (typeObj) ->
-    if isGen typeObj
+    if isArb typeObj
         typeObj
     else if _.isObject typeObj
         [name, args] = _.pairs(typeObj)[0]
@@ -75,10 +76,10 @@ matchAll = (multiPropTypeObj) ->
     _.map pairs, (pair) ->
         _match.apply @, pair
 
-class Gen.Array extends Gen.Interface
+class Arb.Array extends Arb.Interface
 
     _initLength: ({maxlength, minlength, length}) ->
-        @lengthChooser = new Gen.Number
+        @lengthChooser = new Arb.Number
             max: maxlength or length or 100
             min: minlength or length or 0
 
@@ -93,7 +94,7 @@ class Gen.Array extends Gen.Interface
         _.map [0...length], =>
             @itemMaker.next()
 
-class Gen.Tuple extends Gen.Array
+class Arb.Tuple extends Arb.Array
     constructor: (type, length = 2)->
         super type, {length}
 
@@ -103,7 +104,7 @@ toObject = (pairs) ->
         result[key] = value
     return result
 
-class Gen.Object extends Gen.Interface
+class Arb.Object extends Arb.Interface
     constructor: (typeMap) ->
         convertedTypes = _.map typeMap, (type, key) ->
             [key, match type]
@@ -113,4 +114,4 @@ class Gen.Object extends Gen.Interface
         toObject _.map @typeMap, (type, key) ->
             [key, type.next()]
 
-exports.Gen = Gen
+exports.Arb = Arb

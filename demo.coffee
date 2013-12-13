@@ -1,7 +1,21 @@
-
 {Arb} = require './arbitrary'
 {property} = require './property'
 _ = require 'lodash'
+
+do ->
+    notes = new Arb.Object
+        text: new Arb.String " "
+        _id: {'String': '[A-Za-h0-9]{16}'}
+        timestamp:
+            'String': "(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)"        # entities: new Arb.Object
+        # entities: new Arb.Object
+
+        # This needs functions with good scope so we can have nicely derived properties
+        # maybe arugments to 'next' as well, that fields can also access via @ARGS or
+        # whatever when they're functions. Damn, this will be interesting scoping, especially b/c
+        # this^ typeObj is a separate thing from the generator object. Def not ready, need an
+        # mvp. Later. These seem like an object specific-thing, but keep an open mind for uses
+        # with more "primitive" types
 
 doTimes = (times) ->
     (fn) ->
